@@ -27,6 +27,16 @@ class App extends Component {
     this.setState({ state: this.state })
   }
 
+  euthanize = (id) => {
+    console.log(id);
+
+    axios.delete(`/pets/${id}`).then((result) =>{
+      console.log('result of euthanization', result);
+    }).catch((error) =>{
+      console.log(error);
+    })
+  }
+
   render() {
     return (
       <div className="App">
@@ -57,6 +67,7 @@ class App extends Component {
                   <td>{pet.color}</td>
                   <td>{pet.ownerName}</td>
                   <td>{pet.petName}</td>
+                  <td><button onClick={() => this.euthanize(pet.id)}>Euthanize</button></td>
                 </tr>
               )
             })}
