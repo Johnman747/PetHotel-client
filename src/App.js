@@ -12,10 +12,15 @@ class App extends Component {
     this.getInfo()
   }
 
+
   getInfo = () => {
     axios.get('/pets')
       .then((result) => {
+        this.setState({
+          pets: []
+        })
         result.data.map((pet) => {
+        
           this.setState({
             pets: [...this.state.pets, pet]
           })
@@ -25,6 +30,16 @@ class App extends Component {
         console.log(err);
       })
     this.setState({ state: this.state })
+  }
+
+  updateChecked = (id) => {
+    console.log('Clicked!');    
+    axios.patch(`/pets/checked/${id}`)
+    .then((result) => {
+      this.getInfo()
+    }).catch((err) => {
+      console.log(err);
+    })
   }
 
   euthanize = (id) => {
@@ -59,9 +74,9 @@ class App extends Component {
                   <td>{pet.breed}</td>
                   <td>{pet.checkedInDate}</td>
                   <td>{pet.checkedInStatus?
-                    <button>True</button>
+                    <button onClick={() => this.updateChecked(pet.id)}>True</button>
                     :
-                    <button>False</button>
+                    <button onClick={() => this.updateChecked(pet.id)}>False</button>
                   }
                   </td>
                   <td>{pet.color}</td>
