@@ -19,6 +19,7 @@ class App extends Component {
   // }
 
 
+
   getInfo = () => {
     axios.get('/pets')
       .then((result) => {
@@ -45,6 +46,16 @@ class App extends Component {
       this.getInfo()
     }).catch((err) => {
       console.log(err);
+    })
+  }
+
+  euthanize = (id) => {
+    console.log(id);
+
+    axios.delete(`/pets/${id}`).then((result) =>{
+      console.log('result of euthanization', result);
+    }).catch((error) =>{
+      console.log(error);
     })
   }
 
@@ -78,6 +89,7 @@ class App extends Component {
                   <td>{pet.color}</td>
                   <td>{pet.ownerName}</td>
                   <td>{pet.petName}</td>
+                  <td><button onClick={() => this.euthanize(pet.id)}>Euthanize</button></td>
                 </tr>
               )
             })}
