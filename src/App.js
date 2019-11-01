@@ -5,7 +5,16 @@ import axios from "axios";
 class App extends Component {
 
   state = {
-    pets: []
+      pets: [],
+    addPet: {  
+      breed: '',
+      checked_in_date: null,
+      is_checked_in: false,
+      color: '',
+      pet_name: '',
+      owner_id: 1
+    },
+    owner_name: ''
   }
 
   componentDidMount() {
@@ -39,6 +48,39 @@ class App extends Component {
     this.setState({ state: this.state })
   }
 
+  postInfo = (event) => {
+    event.preventDefault();
+    console.log('this is state', this.state.addPet.pet_name);
+    // axios.post('/owners', this.state.owner_name).then((response) => {  
+    //   console.log('posting owner', response)
+    //   }).catch(error => {
+    //     console.log('error with posting owner', error);
+    //   });
+      axios.post('/pets', this.state.addPet).then(response => {
+        console.log('posting to pets', response)
+    }).catch(error => {
+      console.log('error with posting pet', error)
+    });
+}
+
+
+  handleChange = (event, input) => {
+    event.preventDefault();
+    this.setState({
+      addPet:{
+        ...this.state.addPet,
+        [input]: event.target.value
+      }
+    });
+  }
+
+  handleOwnerChange = (event, input) => {
+    event.preventDefault();
+    this.setState({
+      owner_name: event.target.value
+    });
+  }
+  
   updateChecked = (id) => {
     console.log('Clicked!');    
     axios.patch(`/pets/checked/${id}`)
@@ -49,6 +91,7 @@ class App extends Component {
     })
   }
 
+
   euthanize = (id) => {
     console.log(id);
 
@@ -57,7 +100,7 @@ class App extends Component {
     }).catch((error) =>{
       console.log(error);
     })
-  }
+  };
 
   render() {
     return (
@@ -97,6 +140,21 @@ class App extends Component {
           </table>
 
         </header>
+
+      <form onSubmit={this.postInfo}>
+      <input onChange={(event) => this.handleChange(event, 'pet_name')} value={this.state.addPet.pet_name} type="text" placeholder="pet name"/>
+        <input onChange={(event) => this.handleChange(event, 'breed')} value={this.state.addPet.breed} type="text" placeholder="breed"/>
+        <input onChange={(event) => this.handleChange(event, 'color')} value={this.state.addPet.color} type="text" placeholder="color"/>
+        Checked in?
+        <input onChange={(event) => this.handleChange(event, 'check_in_status')} value={this.state.addPet.is_checked_in} type="checkbox" placeholder="check in status"/>
+        <br/>
+        {/* <input onChange={(event) => this.handleChange(event, 'check_in_date')} value={this.state.addPet.check_in_date} type="date" placeholder="check in date"/>
+        <br/> */}
+       
+        <input onChange={(event) => this.handleOwnerChange(event, 'owner_name')} value={this.state.owner_name} type="text" placeholder="owner name"/>
+        <br/>
+        <input type="submit" placeholder="Submit"/>
+      </form>
       </div>
     );
   }
