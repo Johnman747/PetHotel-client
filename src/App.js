@@ -20,11 +20,23 @@ class App extends Component {
   componentDidMount() {
     this.getInfo()
   }
+  
+  // componentDidUpdate(prevState) {
+  //   if (this.state.pets !== prevState.pets){
+  //     this.getInfo()
+  //   }
+  // }
+
+
 
   getInfo = () => {
     axios.get('/pets')
       .then((result) => {
+        this.setState({
+          pets: []
+        })
         result.data.map((pet) => {
+        
           this.setState({
             pets: [...this.state.pets, pet]
           })
@@ -66,8 +78,29 @@ class App extends Component {
     event.preventDefault();
     this.setState({
       owner_name: event.target.value
+    });
+  }
+  
+  updateChecked = (id) => {
+    console.log('Clicked!');    
+    axios.patch(`/pets/checked/${id}`)
+    .then((result) => {
+      this.getInfo()
+    }).catch((err) => {
+      console.log(err);
     })
   }
+
+
+  euthanize = (id) => {
+    console.log(id);
+
+    axios.delete(`/pets/${id}`).then((result) =>{
+      console.log('result of euthanization', result);
+    }).catch((error) =>{
+      console.log(error);
+    })
+  };
 
   render() {
     return (
@@ -91,14 +124,15 @@ class App extends Component {
                   <td>{pet.breed}</td>
                   <td>{pet.checkedInDate}</td>
                   <td>{pet.checkedInStatus?
-                    <button>True</button>
+                    <button onClick={() => this.updateChecked(pet.id)}>True</button>
                     :
-                    <button>False</button>
+                    <button onClick={() => this.updateChecked(pet.id)}>False</button>
                   }
                   </td>
                   <td>{pet.color}</td>
                   <td>{pet.ownerName}</td>
                   <td>{pet.petName}</td>
+                  <td><button onClick={() => this.euthanize(pet.id)}>Euthanize</button></td>
                 </tr>
               )
             })}
